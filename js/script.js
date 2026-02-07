@@ -128,8 +128,8 @@ document.addEventListener("DOMContentLoaded", () => {
       tr.innerHTML = `
         <td class="done-emoji" style="cursor:pointer">${todo.completed ? "😄" : "😢"}</td>
         <td><input type="checkbox" class="done-checkbox" ${todo.selected ? "checked" : ""}></td>
-        <td class="${todo.completed ? "completed" : ""}">${todo.task}</td>
         <td>${todo.date}</td>
+        <td class="${todo.completed ? "completed" : ""}">${todo.task}</td>
         <td>${todo.completed ? "✅ Done" : "⏳ Pending"}</td>
         <td>
           <button class="icon-btn edit">✏️</button>
