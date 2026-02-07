@@ -21,8 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const noteForm = document.getElementById("noteForm");
   const noteInput = document.getElementById("noteInput");
   const noteList = document.getElementById("noteList");
-  const deleteSelectedNotes = document.getElementById("deleteSelectedNotes");
-
+  
   if (!form || !list || !noteForm) {
     console.error("Form, list, or noteForm not found");
     return;
@@ -144,8 +143,8 @@ document.addEventListener("DOMContentLoaded", () => {
     data.forEach(todo => {
       const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td><input type="checkbox" class="select-checkbox" ${todo.selected ? "checked" : ""}></td>
-        <td><input type="checkbox" class="done-checkbox" ${todo.completed ? "checked" : ""}></td>
+        <td class="done-emoji" style="cursor:pointer">${todo.completed ? "😄" : "😢"}</td>
+        <td><input type="checkbox" class="done-checkbox" ${todo.selected ? "checked" : ""}></td>
         <td class="${todo.completed ? "completed" : ""}">${todo.task}</td>
         <td>${todo.date}</td>
         <td>${todo.completed ? "✅ Done" : "⏳ Pending"}</td>
@@ -155,13 +154,15 @@ document.addEventListener("DOMContentLoaded", () => {
         </td>
       `;
 
-      tr.querySelector(".select-checkbox").addEventListener("change", () => {
-        todo.selected = !todo.selected;
-        saveTodos();
+      tr.querySelector(".done-emoji").addEventListener("click", () => {
+      todo.completed = !todo.completed;
+      saveTodos();
+      renderTodos();
       });
 
-      tr.querySelector(".done-checkbox").addEventListener("change", () => {
-        todo.completed = !todo.completed;
+      tr.querySelector(".done-checkbox").addEventListener("change", (e) => {
+        todo.completed = e.target.checked;
+        todo.selected = e.target.checked;
         saveTodos();
         renderTodos();
       });
@@ -208,61 +209,42 @@ document.addEventListener("DOMContentLoaded", () => {
     renderNotes();
   });
 
-  function renderNotes() {
-    noteList.innerHTML = "";
-    if (!notes.length) {
-      noteList.innerHTML = "<p>✨ No notes yet</p>";
-      return;
-    }
-
-    notes.forEach((n, i) => {
-      const div = document.createElement("div");
-      div.className = "note-card";
-      div.innerHTML = `
-        <div>
-          <input type="checkbox" class="note-select" ${n.selected ? "checked" : ""}>
-          <p>${n.text}</p>
-        </div>
-        <div class="note-actions">
-          <button class="edit">✏️</button>
-          <button class="delete">🗑</button>
-        </div>
-      `;
-
-      div.querySelector(".note-select").addEventListener("change", () => {
-        n.selected = !n.selected;
-        saveNotes();
-      });
-
-      div.querySelector(".edit").addEventListener("click", () => {
-        const edit = prompt("Edit note:", n.text);
-        if (!edit || !edit.trim()) return;
-        notes[i].text = edit.trim();
-        saveNotes();
-        renderNotes();
-      });
-
-      div.querySelector(".delete").addEventListener("click", () => {
-        if (!confirm("Delete this note?")) return;
-        notes.splice(i, 1);
-        saveNotes();
-        renderNotes();
-      });
-
-      noteList.appendChild(div);
-    });
+function renderNotes() {
+  noteList.innerHTML = "";
+  if (!notes.length) {
+    noteList.innerHTML = "<p>✨ No notes yet</p>";
+    return;
   }
 
-  if (deleteSelectedNotes) {
-    deleteSelectedNotes.addEventListener("click", () => {
-      const selectedIndices = notes.map((n, i) => n.selected ? i : -1).filter(i => i !== -1);
-      if (!selectedIndices.length) return alert("No notes selected");
-      if (!confirm("Delete selected notes?")) return;
-      notes = notes.filter((_, i) => !selectedIndices.includes(i));
+  notes.forEach((n, i) => {
+    const div = document.createElement("div");
+    div.className = "note-card";
+    div.innerHTML = `
+      <p>${n.text}</p>
+      <div class="note-actions">
+        <button class="edit">✏️</button>
+        <button class="delete">🗑</button>
+      </div>
+    `;
+
+    div.querySelector(".edit").addEventListener("click", () => {
+      const edit = prompt("Edit note:", n.text);
+      if (!edit || !edit.trim()) return;
+      notes[i].text = edit.trim();
       saveNotes();
       renderNotes();
     });
-  }
+
+    div.querySelector(".delete").addEventListener("click", () => {
+      if (!confirm("Delete this note?")) return;
+      notes.splice(i, 1);
+      saveNotes();
+      renderNotes();
+    });
+
+    noteList.appendChild(div);
+  });
+}
 
   function saveNotes() {
     localStorage.setItem("notes", JSON.stringify(notes));

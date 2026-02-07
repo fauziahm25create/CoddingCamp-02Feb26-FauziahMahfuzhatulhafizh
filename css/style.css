@@ -12,7 +12,13 @@ body {
   min-height: 100vh;
 
   background: linear-gradient(
-    120deg,
+    30deg,
+    #fb5acd,
+    #56fad4,
+    #c25df9,
+    #cffa50,
+    #e34747,
+    #6c5ce7, 
     #fb5acd,
     #56fad4,
     #c25df9,
@@ -34,17 +40,14 @@ body {
 }
 
 .navbar {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  padding: 18px 40px;
-
   display: flex;
   justify-content: space-between;
-  align-items: center;
-
-  background: rgba(255,255,255,0.35);
-  backdrop-filter: blur(25px);
+  padding: 20px 40px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: linear-gradient(90deg,rgba(154, 0, 220, 0.26),rgba(253, 223, 0, 0.265),rgba(0, 253, 228, 0.265));
+  backdrop-filter: blur(6px);
   box-shadow: 0 8px 24px rgba(0,0,0,.1);
 }
 
@@ -58,22 +61,32 @@ body {
   width: 52px;
   height: 52px;
   border-radius: 50%;
-  background: linear-gradient(180deg,#31046c,#d798f3);
-  color: white;
+  background: linear-gradient(180deg, #31046c, #31046c, #6c3482, #d798f3,#6c3482, #31046c, #31046c, #6c3482, #31046c, #31046c);
   display: flex;
-  justify-content: center;
   align-items: center;
-  font-weight: 900;
-  font-size: 18px;
+  justify-content: center;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  color: white;
+  letter-spacing: 1px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.25);
 }
 
 .logo {
-  font-size: 32px;
+  font-family: 'Playfair Display', Georgia;
   font-weight: 700;
-  background: linear-gradient(330deg,#28005b,#bc2ff9,#28005b);
+  font-size: 40px;
+  background: linear-gradient(75deg,#28005b, #2f0368, #6c3482, #bc2ff9, #28005b, #2f0368, 
+  #d798f3,#28005b, #2f0368, #6c3482, #28005b, 
+  #2f0368, #6c3482, #31046c, #d798f3, #31046c,
+  #6c3482, #6c3482, #28005b, #2f0368, #bc2ff9, 
+  #2f0368, #28005b, #d798f3,#28005b, #2f0368, 
+  #6c3482, #bc2ff9, #2f0368, #28005b);
+
   -webkit-background-clip: text;
-  background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .nav-links {
@@ -136,8 +149,9 @@ section h2 {
 }
 
 .emoji {
-  font-size: 54px;
-  vertical-align: middle;
+  -webkit-text-fill-color: initial;
+  background: none;
+  margin-left: 8px;
 }
 
 .highlight {
@@ -275,4 +289,24 @@ button:hover {
   background: rgba(255,255,255,0.7);
   backdrop-filter: blur(10px);
   font-size: 14px;
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .navbar ul {
+    gap: 10px;
+    justify-content: center;
+  }
+
+  .logo {
+    font-size: 40px;
+    text-align: center;
+  }
 }
