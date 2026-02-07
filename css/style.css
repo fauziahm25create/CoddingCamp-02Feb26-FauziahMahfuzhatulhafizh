@@ -9,6 +9,8 @@ body {
   BlinkMacSystemFont, 'Segoe UI', 'Segoe UIEmoji', 'Apple Color Emoji', 
   'Noto Color Emoji', sans-serif;
   color: #222;
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
 
   background: linear-gradient(
@@ -29,6 +31,10 @@ body {
   background-size: 600% 600%;
   animation: waveGradient 10s ease-in-out infinite;
   background-attachment: fixed;
+}
+
+main {
+  flex: 1;
 }
 
 @keyframes waveGradient {
@@ -289,6 +295,7 @@ button:hover {
   background: rgba(255,255,255,0.7);
   backdrop-filter: blur(10px);
   font-size: 14px;
+  margin-top: auto;
 }
 
 @media (max-width: 768px) {
