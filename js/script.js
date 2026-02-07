@@ -2,8 +2,6 @@ document.addEventListener("DOMContentLoaded", () => {
   console.log("JS loaded successfully"); 
 
   const sections = document.querySelectorAll(".section");
-  console.log("Sections found:", sections.length);
-
   const form = document.getElementById("todoForm");
   const taskInput = document.getElementById("taskInput");
   const dateInput = document.getElementById("dateInput");
@@ -17,11 +15,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const progress = document.getElementById("progress");
   const counter = document.getElementById("counter");
   const motivation = document.getElementById("motivation");
-
   const noteForm = document.getElementById("noteForm");
   const noteInput = document.getElementById("noteInput");
   const noteList = document.getElementById("noteList");
-  
+
   if (!form || !list || !noteForm) {
     console.error("Form, list, or noteForm not found");
     return;
@@ -40,13 +37,12 @@ document.addEventListener("DOMContentLoaded", () => {
     motivation.textContent = messages[Math.floor(Math.random() * messages.length)];
   }
 
+  // REVEAL SECTIONS ON SCROLL
   function reveal() {
-    console.log("Reveal function called");
     const trigger = window.innerHeight - 100;
-    sections.forEach((sec, index) => {
+    sections.forEach(sec => {
       if (sec.getBoundingClientRect().top < trigger) {
         sec.classList.add("show");
-        console.log(`Section ${index} shown`);
       }
     });
   }
@@ -54,14 +50,10 @@ document.addEventListener("DOMContentLoaded", () => {
   reveal();
 
   setTimeout(() => {
-    sections.forEach(sec => {
-      if (!sec.classList.contains("show")) {
-        sec.classList.add("show");
-        console.log("Fallback: Forced section to show");
-      }
-    });
+    sections.forEach(sec => sec.classList.add("show"));
   }, 1000);
 
+  // TODO FORM SUBMIT
   form.addEventListener("submit", e => {
     e.preventDefault();
     taskError.textContent = "";
@@ -91,18 +83,18 @@ document.addEventListener("DOMContentLoaded", () => {
     renderTodos();
   });
 
-  if (filter) {
-    filter.addEventListener("change", renderTodos);
-  }
+  // FILTER CHANGE
+  if (filter) filter.addEventListener("change", renderTodos);
 
+  // SELECT ALL TOGGLE
   if (selectAll) {
     selectAll.addEventListener("change", () => {
-      const checkboxes = list.querySelectorAll('input[type="checkbox"]:not(#selectAll)');
-      checkboxes.forEach(cb => cb.checked = selectAll.checked);
       todos.forEach(todo => todo.selected = selectAll.checked);
+      renderTodos();
     });
   }
 
+  // DELETE SELECTED
   if (deleteSelected) {
     deleteSelected.addEventListener("click", () => {
       const selectedIds = todos.filter(t => t.selected).map(t => t.id);
@@ -114,6 +106,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // DELETE ALL
   if (deleteAll) {
     deleteAll.addEventListener("click", () => {
       if (!confirm("Delete all tasks?")) return;
@@ -123,16 +116,13 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // RENDER TODOS
   function renderTodos() {
     list.innerHTML = "";
 
     let data = [...todos];
-    if (filter && filter.value === "completed") {
-      data = data.filter(t => t.completed);
-    }
-    if (filter && filter.value === "uncompleted") {
-      data = data.filter(t => !t.completed);
-    }
+    if (filter && filter.value === "completed") data = data.filter(t => t.completed);
+    if (filter && filter.value === "uncompleted") data = data.filter(t => !t.completed);
 
     if (!data.length) {
       list.innerHTML = "<tr><td colspan='6'>✨ No task yet</td></tr>";
@@ -154,30 +144,37 @@ document.addEventListener("DOMContentLoaded", () => {
         </td>
       `;
 
-      tr.querySelector(".done-emoji").addEventListener("click", () => {
-      todo.completed = !todo.completed;
-      saveTodos();
-      renderTodos();
+      const emoji = tr.querySelector(".done-emoji");
+      const checkbox = tr.querySelector(".done-checkbox");
+      const editBtn = tr.querySelector(".edit");
+      const deleteBtn = tr.querySelector(".delete");
+
+      // TOGGLE DONE
+      emoji.addEventListener("click", () => {
+        todo.completed = !todo.completed;
+        saveTodos();
+        renderTodos();
       });
 
-      tr.querySelector(".done-checkbox").addEventListener("change", (e) => {
-        todo.completed = e.target.checked;
+      checkbox.addEventListener("change", (e) => {
         todo.selected = e.target.checked;
         saveTodos();
         renderTodos();
       });
 
-      tr.querySelector(".delete").addEventListener("click", () => {
-        if (!confirm("Delete this task?")) return;
-        todos = todos.filter(t => t.id !== todo.id);
+      // EDIT TASK
+      editBtn.addEventListener("click", () => {
+        const edit = prompt("Edit task:", todo.task);
+        if (!edit || !edit.trim()) return;
+        todo.task = edit.trim();
         saveTodos();
         renderTodos();
       });
 
-      tr.querySelector(".edit").addEventListener("click", () => {
-        const edit = prompt("Edit task:", todo.task);
-        if (!edit || !edit.trim()) return;
-        todo.task = edit.trim();
+      // DELETE TASK
+      deleteBtn.addEventListener("click", () => {
+        if (!confirm("Delete this task?")) return;
+        todos = todos.filter(t => t.id !== todo.id);
         saveTodos();
         renderTodos();
       });
@@ -188,6 +185,7 @@ document.addEventListener("DOMContentLoaded", () => {
     updateProgress();
   }
 
+  // PROGRESS BAR
   function updateProgress() {
     const done = todos.filter(t => t.completed).length;
     const total = todos.length;
@@ -199,52 +197,52 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem("todos", JSON.stringify(todos));
   }
 
+  // NOTES FORM
   noteForm.addEventListener("submit", e => {
     e.preventDefault();
     if (!noteInput.value.trim()) return;
-
     notes.push({ text: noteInput.value.trim(), selected: false });
     noteInput.value = "";
     saveNotes();
     renderNotes();
   });
 
-function renderNotes() {
-  noteList.innerHTML = "";
-  if (!notes.length) {
-    noteList.innerHTML = "<p>✨ No notes yet</p>";
-    return;
+  function renderNotes() {
+    noteList.innerHTML = "";
+    if (!notes.length) {
+      noteList.innerHTML = "<p>✨ No notes yet</p>";
+      return;
+    }
+
+    notes.forEach((n, i) => {
+      const div = document.createElement("div");
+      div.className = "note-card";
+      div.innerHTML = `
+        <p>${n.text}</p>
+        <div class="note-actions">
+          <button class="edit">✏️</button>
+          <button class="delete">🗑</button>
+        </div>
+      `;
+
+      div.querySelector(".edit").addEventListener("click", () => {
+        const edit = prompt("Edit note:", n.text);
+        if (!edit || !edit.trim()) return;
+        notes[i].text = edit.trim();
+        saveNotes();
+        renderNotes();
+      });
+
+      div.querySelector(".delete").addEventListener("click", () => {
+        if (!confirm("Delete this note?")) return;
+        notes.splice(i, 1);
+        saveNotes();
+        renderNotes();
+      });
+
+      noteList.appendChild(div);
+    });
   }
-
-  notes.forEach((n, i) => {
-    const div = document.createElement("div");
-    div.className = "note-card";
-    div.innerHTML = `
-      <p>${n.text}</p>
-      <div class="note-actions">
-        <button class="edit">✏️</button>
-        <button class="delete">🗑</button>
-      </div>
-    `;
-
-    div.querySelector(".edit").addEventListener("click", () => {
-      const edit = prompt("Edit note:", n.text);
-      if (!edit || !edit.trim()) return;
-      notes[i].text = edit.trim();
-      saveNotes();
-      renderNotes();
-    });
-
-    div.querySelector(".delete").addEventListener("click", () => {
-      if (!confirm("Delete this note?")) return;
-      notes.splice(i, 1);
-      saveNotes();
-      renderNotes();
-    });
-
-    noteList.appendChild(div);
-  });
-}
 
   function saveNotes() {
     localStorage.setItem("notes", JSON.stringify(notes));

@@ -4,10 +4,13 @@
   box-sizing: border-box;
 }
 
+html, body {
+  overflow-x: hidden; /* diubah dari hidden total agar scroll vertikal tetap bisa */
+  scroll-behavior: smooth;
+}
+
 body {
-  font-family: 'Poppins', system-ui, system-ui, -apple-system, 
-  BlinkMacSystemFont, 'Segoe UI', 'Segoe UIEmoji', 'Apple Color Emoji', 
-  'Noto Color Emoji', sans-serif;
+  font-family: 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Segoe UI Emoji', 'Apple Color Emoji', 'Noto Color Emoji', sans-serif;
   color: #222;
   display: flex;
   flex-direction: column;
@@ -35,6 +38,7 @@ body {
 
 main {
   flex: 1;
+  width: 100%;
 }
 
 @keyframes waveGradient {
@@ -55,6 +59,8 @@ main {
   background: linear-gradient(90deg,rgba(154, 0, 220, 0.26),rgba(253, 223, 0, 0.265),rgba(0, 253, 228, 0.265));
   backdrop-filter: blur(6px);
   box-shadow: 0 8px 24px rgba(0,0,0,.1);
+  flex-wrap: wrap; /* agar rapi di mobile */
+  gap: 10px;
 }
 
 .logo-wrapper {
@@ -89,7 +95,6 @@ main {
   #6c3482, #6c3482, #28005b, #2f0368, #bc2ff9, 
   #2f0368, #28005b, #d798f3,#28005b, #2f0368, 
   #6c3482, #bc2ff9, #2f0368, #28005b);
-
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -98,6 +103,8 @@ main {
 .nav-links {
   display: flex;
   gap: 20px;
+  flex-wrap: wrap; /* responsive di mobile */
+  justify-content: center;
 }
 
 .nav-links a {
@@ -126,15 +133,14 @@ main {
   max-width: 1000px;
   margin: auto;
   padding: 70px 20px;
-
   opacity: 0;
   transform: translateY(40px);
+  transition: .7s ease;
 }
 
 .section.show {
   opacity: 1;
   transform: translateY(0);
-  transition: .7s ease;
 }
 
 section h2 {
@@ -178,6 +184,7 @@ button {
   margin-bottom: 12px;
   font-family: inherit;
   transition: .25s ease;
+  max-width: 100%; /* tambahan untuk mobile */
 }
 
 input:focus,
@@ -202,7 +209,7 @@ button:hover {
 .todo-actions {
   display: flex;
   gap: 12px;
-  flex-wrap: wrap;
+  flex-wrap: wrap; /* tambahan agar tombol tidak meluber di mobile */
 }
 
 .todo-table {
@@ -210,7 +217,6 @@ button:hover {
   border-collapse: collapse;
   border-radius: 18px;
   overflow: hidden;
-
   background: rgba(255,255,255,0.92);
   box-shadow: 0 10px 28px rgba(0,0,0,.15);
 }
@@ -219,6 +225,7 @@ button:hover {
 .todo-table td {
   padding: 16px;
   text-align: center;
+  word-wrap: break-word; /* untuk teks panjang */
 }
 
 .todo-table thead {
@@ -281,12 +288,14 @@ button:hover {
   border-radius: 14px;
   margin-top: 12px;
   box-shadow: 0 6px 14px rgba(0,0,0,.12);
+  word-wrap: break-word;
 }
 
 .note-actions {
   display: flex;
   gap: 10px;
   margin-top: 10px;
+  flex-wrap: wrap;
 }
 
 .footer {
@@ -300,20 +309,28 @@ button:hover {
 
 @media (max-width: 768px) {
   .navbar {
-    flex-direction: row;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     gap: 10px;
-    flex-wrap: wrap;
-  }
-
-  .navbar ul {
-    gap: 10px;
-    justify-content: center;
   }
 
   .logo {
-    font-size: 40px;
+    font-size: 36px;
     text-align: center;
+  }
+
+  .home-title {
+    font-size: 36px;
+  }
+
+  input, button, select, textarea {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .todo-actions, .note-actions {
+    flex-direction: column;
+    gap: 10px;
   }
 }
