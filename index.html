@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>FM Focus Planner</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<nav class="navbar">
+  <div class="logo-wrapper">
+    <div class="logo-circle">FM</div>
+    <h2 class="logo">FM Focus Planner</h2>
+  </div>
+
+  <div class="nav-links">
+    <a href="#home">Home</a>
+    <a href="#tasks">Tasks</a>
+    <a href="#notes">Notes</a>
+  </div>
+</nav>
+
+<section id="home" class="home section">
+  <h1 class="home-title">
+    Finish Your Tasks<br>
+    <span class="highlight">One by One ✨</span>
+  </h1>
+  <p id="motivation"></p>
+</section>
+
+<section id="tasks" class="section">
+  <h2>📋 Add Task</h2>
+
+  <form id="todoForm">
+    <input type="text" id="taskInput" placeholder="Task name" required>
+    <input type="date" id="dateInput" required>
+    <small class="error" id="taskError"></small>
+    <small class="error" id="dateError"></small>
+    <button type="submit">➕ Add Task</button>
+  </form>
+
+  <div class="todo-actions">
+    <select id="filter">
+      <option value="all">All</option>
+      <option value="completed">Completed</option>
+      <option value="uncompleted">Uncompleted</option>
+    </select>
+    <button id="deleteAll">🗑 Delete All</button>
+  </div>
+
+  <div class="progress-box">
+    Progress <span id="counter"></span>
+    <div class="progress-bar">
+      <div id="progress"></div>
+    </div>
+  </div>
+
+  <h2>🗂 Task List</h2>
+
+  <table class="todo-table">
+    <thead>
+      <tr>
+        <th>Done</th>
+        <th>Task</th>
+        <th>Date</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="todoList"></tbody>
+  </table>
+</section>
+
+<section id="notes" class="section">
+  <h2>📝 Notes</h2>
+
+  <form id="noteForm">
+    <textarea id="noteInput" placeholder="Write note..." required></textarea>
+    <button type="submit">💾 Save Note</button>
+  </form>
+
+  <div id="noteList"></div>
+</section>
+
+<footer class="footer">
+  © 2026 FM Digital Solutions • Stay productive 🌱
+</footer>
+
+<script src="js/script.js"></script>
+</body>
+</html>
+</html>
