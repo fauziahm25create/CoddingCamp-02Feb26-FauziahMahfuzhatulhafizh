@@ -37,7 +37,6 @@ document.addEventListener("DOMContentLoaded", () => {
     motivation.textContent = messages[Math.floor(Math.random() * messages.length)];
   }
 
-  // REVEAL SECTIONS ON SCROLL
   function reveal() {
     const trigger = window.innerHeight - 100;
     sections.forEach(sec => {
@@ -53,7 +52,6 @@ document.addEventListener("DOMContentLoaded", () => {
     sections.forEach(sec => sec.classList.add("show"));
   }, 1000);
 
-  // TODO FORM SUBMIT
   form.addEventListener("submit", e => {
     e.preventDefault();
     taskError.textContent = "";
@@ -83,10 +81,8 @@ document.addEventListener("DOMContentLoaded", () => {
     renderTodos();
   });
 
-  // FILTER CHANGE
   if (filter) filter.addEventListener("change", renderTodos);
 
-  // SELECT ALL TOGGLE
   if (selectAll) {
     selectAll.addEventListener("change", () => {
       todos.forEach(todo => todo.selected = selectAll.checked);
@@ -94,7 +90,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // DELETE SELECTED
   if (deleteSelected) {
     deleteSelected.addEventListener("click", () => {
       const selectedIds = todos.filter(t => t.selected).map(t => t.id);
@@ -106,7 +101,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // DELETE ALL
   if (deleteAll) {
     deleteAll.addEventListener("click", () => {
       if (!confirm("Delete all tasks?")) return;
@@ -116,7 +110,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // RENDER TODOS
   function renderTodos() {
     list.innerHTML = "";
 
@@ -149,20 +142,13 @@ document.addEventListener("DOMContentLoaded", () => {
       const editBtn = tr.querySelector(".edit");
       const deleteBtn = tr.querySelector(".delete");
 
-      // TOGGLE DONE
-      emoji.addEventListener("click", () => {
-        todo.completed = !todo.completed;
-        saveTodos();
-        renderTodos();
-      });
-
       checkbox.addEventListener("change", (e) => {
-        todo.selected = e.target.checked;
-        saveTodos();
-        renderTodos();
+      todo.selected = e.target.checked;
+      todo.completed = e.target.checked;
+      saveTodos();
+      renderTodos();
       });
 
-      // EDIT TASK
       editBtn.addEventListener("click", () => {
         const edit = prompt("Edit task:", todo.task);
         if (!edit || !edit.trim()) return;
@@ -171,7 +157,12 @@ document.addEventListener("DOMContentLoaded", () => {
         renderTodos();
       });
 
-      // DELETE TASK
+      tr.querySelector(".done-emoji").addEventListener("click", () => {
+      todo.completed = !todo.completed;
+      saveTodos();
+      renderTodos();
+    });
+
       deleteBtn.addEventListener("click", () => {
         if (!confirm("Delete this task?")) return;
         todos = todos.filter(t => t.id !== todo.id);
@@ -185,7 +176,6 @@ document.addEventListener("DOMContentLoaded", () => {
     updateProgress();
   }
 
-  // PROGRESS BAR
   function updateProgress() {
     const done = todos.filter(t => t.completed).length;
     const total = todos.length;
@@ -197,7 +187,6 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem("todos", JSON.stringify(todos));
   }
 
-  // NOTES FORM
   noteForm.addEventListener("submit", e => {
     e.preventDefault();
     if (!noteInput.value.trim()) return;
