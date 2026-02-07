@@ -1,7 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
+  console.log("JS loaded successfully"); 
 
-  /* ================= ELEMENT ================= */
   const sections = document.querySelectorAll(".section");
+  console.log("Sections found:", sections.length);
+
   const form = document.getElementById("todoForm");
   const taskInput = document.getElementById("taskInput");
   const dateInput = document.getElementById("dateInput");
@@ -10,6 +12,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const list = document.getElementById("todoList");
   const filter = document.getElementById("filter");
   const deleteAll = document.getElementById("deleteAll");
+  const deleteSelected = document.getElementById("deleteSelected");
+  const selectAll = document.getElementById("selectAll");
   const progress = document.getElementById("progress");
   const counter = document.getElementById("counter");
   const motivation = document.getElementById("motivation");
@@ -17,14 +21,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const noteForm = document.getElementById("noteForm");
   const noteInput = document.getElementById("noteInput");
   const noteList = document.getElementById("noteList");
+  const deleteSelectedNotes = document.getElementById("deleteSelectedNotes");
 
-  if (!form || !list || !noteForm) return;
+  if (!form || !list || !noteForm) {
+    console.error("Form, list, or noteForm not found");
+    return;
+  }
 
-  /* ================= DATA ================= */
   let todos = JSON.parse(localStorage.getItem("todos")) || [];
   let notes = JSON.parse(localStorage.getItem("notes")) || [];
 
-  /* ================= MOTIVATION ================= */
   const messages = [
     "You’re closer than you think 💪",
     "Small progress is still progress 🌱",
@@ -35,19 +41,28 @@ document.addEventListener("DOMContentLoaded", () => {
     motivation.textContent = messages[Math.floor(Math.random() * messages.length)];
   }
 
-  /* ================= SECTION REVEAL ================= */
   function reveal() {
+    console.log("Reveal function called");
     const trigger = window.innerHeight - 100;
-    sections.forEach(sec => {
+    sections.forEach((sec, index) => {
       if (sec.getBoundingClientRect().top < trigger) {
         sec.classList.add("show");
+        console.log(`Section ${index} shown`);
       }
     });
   }
   window.addEventListener("scroll", reveal);
   reveal();
 
-  /* ================= ADD TODO ================= */
+  setTimeout(() => {
+    sections.forEach(sec => {
+      if (!sec.classList.contains("show")) {
+        sec.classList.add("show");
+        console.log("Fallback: Forced section to show");
+      }
+    });
+  }, 1000);
+
   form.addEventListener("submit", e => {
     e.preventDefault();
     taskError.textContent = "";
@@ -66,7 +81,8 @@ document.addEventListener("DOMContentLoaded", () => {
       id: Date.now(),
       task: taskInput.value.trim(),
       date: dateInput.value,
-      completed: false
+      completed: false,
+      selected: false
     });
 
     taskInput.value = "";
@@ -76,12 +92,29 @@ document.addEventListener("DOMContentLoaded", () => {
     renderTodos();
   });
 
-  /* ================= FILTER ================= */
   if (filter) {
     filter.addEventListener("change", renderTodos);
   }
 
-  /* ================= DELETE ALL ================= */
+  if (selectAll) {
+    selectAll.addEventListener("change", () => {
+      const checkboxes = list.querySelectorAll('input[type="checkbox"]:not(#selectAll)');
+      checkboxes.forEach(cb => cb.checked = selectAll.checked);
+      todos.forEach(todo => todo.selected = selectAll.checked);
+    });
+  }
+
+  if (deleteSelected) {
+    deleteSelected.addEventListener("click", () => {
+      const selectedIds = todos.filter(t => t.selected).map(t => t.id);
+      if (!selectedIds.length) return alert("No tasks selected");
+      if (!confirm("Delete selected tasks?")) return;
+      todos = todos.filter(t => !selectedIds.includes(t.id));
+      saveTodos();
+      renderTodos();
+    });
+  }
+
   if (deleteAll) {
     deleteAll.addEventListener("click", () => {
       if (!confirm("Delete all tasks?")) return;
@@ -91,7 +124,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  /* ================= RENDER TODOS ================= */
   function renderTodos() {
     list.innerHTML = "";
 
@@ -104,7 +136,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (!data.length) {
-      list.innerHTML = "<tr><td colspan='5'>✨ No task yet</td></tr>";
+      list.innerHTML = "<tr><td colspan='6'>✨ No task yet</td></tr>";
       updateProgress();
       return;
     }
@@ -112,7 +144,8 @@ document.addEventListener("DOMContentLoaded", () => {
     data.forEach(todo => {
       const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td><input type="checkbox" ${todo.completed ? "checked" : ""}></td>
+        <td><input type="checkbox" class="select-checkbox" ${todo.selected ? "checked" : ""}></td>
+        <td><input type="checkbox" class="done-checkbox" ${todo.completed ? "checked" : ""}></td>
         <td class="${todo.completed ? "completed" : ""}">${todo.task}</td>
         <td>${todo.date}</td>
         <td>${todo.completed ? "✅ Done" : "⏳ Pending"}</td>
@@ -122,7 +155,12 @@ document.addEventListener("DOMContentLoaded", () => {
         </td>
       `;
 
-      tr.querySelector("input").addEventListener("change", () => {
+      tr.querySelector(".select-checkbox").addEventListener("change", () => {
+        todo.selected = !todo.selected;
+        saveTodos();
+      });
+
+      tr.querySelector(".done-checkbox").addEventListener("change", () => {
         todo.completed = !todo.completed;
         saveTodos();
         renderTodos();
@@ -149,7 +187,6 @@ document.addEventListener("DOMContentLoaded", () => {
     updateProgress();
   }
 
-  /* ================= PROGRESS ================= */
   function updateProgress() {
     const done = todos.filter(t => t.completed).length;
     const total = todos.length;
@@ -161,12 +198,11 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem("todos", JSON.stringify(todos));
   }
 
-  /* ================= NOTES ================= */
   noteForm.addEventListener("submit", e => {
     e.preventDefault();
     if (!noteInput.value.trim()) return;
 
-    notes.push({ text: noteInput.value.trim() });
+    notes.push({ text: noteInput.value.trim(), selected: false });
     noteInput.value = "";
     saveNotes();
     renderNotes();
@@ -183,12 +219,20 @@ document.addEventListener("DOMContentLoaded", () => {
       const div = document.createElement("div");
       div.className = "note-card";
       div.innerHTML = `
-        <p>${n.text}</p>
+        <div>
+          <input type="checkbox" class="note-select" ${n.selected ? "checked" : ""}>
+          <p>${n.text}</p>
+        </div>
         <div class="note-actions">
           <button class="edit">✏️</button>
           <button class="delete">🗑</button>
         </div>
       `;
+
+      div.querySelector(".note-select").addEventListener("change", () => {
+        n.selected = !n.selected;
+        saveNotes();
+      });
 
       div.querySelector(".edit").addEventListener("click", () => {
         const edit = prompt("Edit note:", n.text);
@@ -209,12 +253,21 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  if (deleteSelectedNotes) {
+    deleteSelectedNotes.addEventListener("click", () => {
+      const selectedIndices = notes.map((n, i) => n.selected ? i : -1).filter(i => i !== -1);
+      if (!selectedIndices.length) return alert("No notes selected");
+      if (!confirm("Delete selected notes?")) return;
+      notes = notes.filter((_, i) => !selectedIndices.includes(i));
+      saveNotes();
+      renderNotes();
+    });
+  }
+
   function saveNotes() {
     localStorage.setItem("notes", JSON.stringify(notes));
   }
 
-  /* ================= INIT ================= */
   renderTodos();
   renderNotes();
-
 });
