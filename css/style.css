@@ -184,7 +184,7 @@ button {
   margin-bottom: 12px;
   font-family: inherit;
   transition: .25s ease;
-  max-width: 100%; /* tambahan untuk mobile */
+  max-width: 100%;
 }
 
 input:focus,
@@ -209,10 +209,18 @@ button:hover {
 .todo-actions {
   display: flex;
   gap: 12px;
-  flex-wrap: wrap; /* tambahan agar tombol tidak meluber di mobile */
+  flex-wrap: wrap;
+}
+
+.todo-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  padding: 0 10px;
+  margin: auto; 
 }
 
 .todo-table {
+  min-width: 500px; 
   width: 100%;
   border-collapse: collapse;
   border-radius: 18px;
@@ -221,11 +229,26 @@ button:hover {
   box-shadow: 0 10px 28px rgba(0,0,0,.15);
 }
 
+@media (max-width: 768px) {
+  .section {
+    padding: 50px 16px;
+  }
+
+  .todo-wrapper {
+    padding: 0 8px;
+  }
+
+  .todo-table th,
+  .todo-table td {
+    padding: 12px;
+  }
+}
+
 .todo-table th,
 .todo-table td {
   padding: 16px;
   text-align: center;
-  word-wrap: break-word; /* untuk teks panjang */
+  word-wrap: break-word;
 }
 
 .todo-table thead {
@@ -313,6 +336,7 @@ button:hover {
     justify-content: center;
     align-items: center;
     gap: 10px;
+    position: sticky;
   }
 
   .logo {
