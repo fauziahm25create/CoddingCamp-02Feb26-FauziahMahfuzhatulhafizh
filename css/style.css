@@ -5,7 +5,7 @@
 }
 
 html, body {
-  overflow-x: hidden; /* diubah dari hidden total agar scroll vertikal tetap bisa */
+  overflow-x: hidden;
   scroll-behavior: smooth;
 }
 
@@ -39,6 +39,7 @@ body {
 main {
   flex: 1;
   width: 100%;
+  padding-top: 100px;
 }
 
 @keyframes waveGradient {
@@ -53,13 +54,15 @@ main {
   display: flex;
   justify-content: space-between;
   padding: 20px 40px;
-  position: sticky;
+  position: fixed;
   top: 0;
-  z-index: 10;
+  left: 0;
+  width: 100%;
+  z-index: 999; 
   background: linear-gradient(90deg,rgba(154, 0, 220, 0.26),rgba(253, 223, 0, 0.265),rgba(0, 253, 228, 0.265));
   backdrop-filter: blur(6px);
   box-shadow: 0 8px 24px rgba(0,0,0,.1);
-  flex-wrap: wrap; /* agar rapi di mobile */
+  flex-wrap: wrap;
   gap: 10px;
 }
 
@@ -103,7 +106,7 @@ main {
 .nav-links {
   display: flex;
   gap: 20px;
-  flex-wrap: wrap; /* responsive di mobile */
+  flex-wrap: wrap;
   justify-content: center;
 }
 
@@ -155,9 +158,16 @@ section h2 {
 
 .home-title {
   font-family: 'Playfair Display', Georgia, serif;
-  font-size: 54px;
-  margin-bottom: 12px;
+  font-size: 70px;
+  margin-top: 80px;
+  margin-bottom: 10px;
   letter-spacing: 1px;
+  background: linear-gradient(360deg,#28005b, #2f0368, #6c3482, #2f0368,#2f0368, 
+  #3104, #31046c,#6c3482, #2f0368, #28005b, #28005b, #2f0368);
+  text-shadow: 2px 2px 6px rgba(76, 50, 78, 0.265);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .emoji {
@@ -323,10 +333,10 @@ button:hover {
 
 .footer {
   text-align: center;
-  padding: 22px;
+  padding:  20px 40px;
   background: rgba(255,255,255,0.7);
   backdrop-filter: blur(10px);
-  font-size: 14px;
+  font-size: 20px;
   margin-top: auto;
 }
 
@@ -336,7 +346,7 @@ button:hover {
     justify-content: center;
     align-items: center;
     gap: 10px;
-    position: sticky;
+    position: fixed;
   }
 
   .logo {
@@ -345,7 +355,8 @@ button:hover {
   }
 
   .home-title {
-    font-size: 36px;
+    font-size: 50px;
+    margin-top: 90px;
   }
 
   input, button, select, textarea {
